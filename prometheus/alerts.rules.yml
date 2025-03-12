@@ -1,0 +1,32 @@
+groups:
+  - name: example
+    rules:
+      # Alert for any instance that is unreachable for >2 minutes.
+      - alert: service_down
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+
+      # Alert for high CPU usage for >2 minutes.
+      - alert: HighCPULoad
+        expr: node_load1 > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Instance {{ $labels.instance }} under high load - High load CPU detected"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} is under high load for last 2 minutes."
+
+      # Alert for high request rate.
+      - alert: HighRequestRate
+        expr: rate(http_requests_total{job="web_server"}[5m]) > 100
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: High request rate on web server
+          description: "{{ $labels.instance }} has high request rate (>100 req/min)"
